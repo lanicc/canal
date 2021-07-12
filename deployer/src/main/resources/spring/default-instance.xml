@@ -32,7 +32,7 @@
         <property name="mqConfig">
             <ref bean="mqConfig" />
         </property>
-	</bean>LogAlarmHandler
+	</bean>
 
 	<!-- 报警处理类 -->
 <!--	<bean id="alarmHandler" class="com.alibaba.otter.canal.common.alarm.LogAlarmHandler" />-->

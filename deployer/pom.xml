@@ -18,11 +18,16 @@
         </dependency>
 
         <!-- 这里指定runtime的metrics provider-->
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.otter</groupId>-->
+<!--            <artifactId>canal.prometheus</artifactId>-->
+<!--            <version>${project.version}</version>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>com.alibaba.otter</groupId>
-            <artifactId>canal.prometheus</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
+            <groupId>com.souche</groupId>
+            <artifactId>instance-monitor</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -65,11 +70,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus</artifactId>
-            <version>3.4.3</version>
-        </dependency>
+
     </dependencies>
 
     <build>

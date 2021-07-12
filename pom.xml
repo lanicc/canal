@@ -129,6 +129,7 @@
         <module>client-adapter</module>
         <module>connector</module>
       <module>ng-common</module>
+      <module>instance-monitor</module>
     </modules>
 
     <dependencyManagement>

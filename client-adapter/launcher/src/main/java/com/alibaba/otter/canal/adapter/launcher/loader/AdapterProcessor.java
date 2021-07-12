@@ -204,7 +204,9 @@ public class AdapterProcessor {
                             long begin = System.currentTimeMillis();
                             List<CommonMessage> commonMessages = canalMsgConsumer
                                 .getMessage(this.canalClientConfig.getTimeout(), TimeUnit.MILLISECONDS);
-                            writeOut(commonMessages);
+                            if (commonMessages != null && !commonMessages.isEmpty()) {
+                                writeOut(commonMessages);
+                            }
                             canalMsgConsumer.ack();
                             if (logger.isDebugEnabled()) {
                                 logger.debug("destination: {} elapsed time: {} ms",

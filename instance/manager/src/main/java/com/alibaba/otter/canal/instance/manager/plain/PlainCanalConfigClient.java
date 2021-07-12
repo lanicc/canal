@@ -28,6 +28,7 @@ public class PlainCanalConfigClient extends AbstractCanalLifeCycle implements Ca
 
     private final static Integer REQUEST_TIMEOUT = 5000;
     private String               configURL;
+    private String               id;
     private String               user;
     private String               passwd;
     private HttpHelper           httpHelper;
@@ -37,12 +38,17 @@ public class PlainCanalConfigClient extends AbstractCanalLifeCycle implements Ca
     private String               autoCluster;
     private String               name;
 
-    public PlainCanalConfigClient(String configURL, String user, String passwd, String localIp, int adminPort,
+    public PlainCanalConfigClient(String configURL,String id, String user, String passwd, String localIp, int adminPort,
                                   boolean autoRegister, String autoCluster, String name){
         this(configURL, user, passwd, localIp, adminPort);
         this.autoCluster = autoCluster;
         this.autoRegister = autoRegister;
-        this.name = name;
+        this.id = id;
+        if (StringUtils.isEmpty(name)) {
+            this.name = id;
+        } else {
+            this.name = name;
+        }
     }
 
     public PlainCanalConfigClient(String configURL, String user, String passwd, String localIp, int adminPort){
@@ -73,7 +79,7 @@ public class PlainCanalConfigClient extends AbstractCanalLifeCycle implements Ca
             md5 = "";
         }
         String url = configURL + "/api/v1/config/server_polling?ip=" + localIp + "&port=" + adminPort + "&md5=" + md5
-                     + "&register=" + (autoRegister ? 1 : 0) + "&cluster=" + autoCluster + "&name=" + name;
+                     + "&register=" + (autoRegister ? 1 : 0) + "&cluster=" + autoCluster + "&name=" + name + "&id=" + id;
         return queryConfig(url);
     }
 
@@ -103,6 +109,18 @@ public class PlainCanalConfigClient extends AbstractCanalLifeCycle implements Ca
         } else {
             return null;
         }
+    }
+
+    public boolean handleAlarm(String destination, String msg) {
+        Map<String, String> heads = new HashMap<>();
+        heads.put("user", user);
+        heads.put("passwd", passwd);
+        Map<String, String> data = new HashMap<>();
+        data.put("destination", destination);
+        data.put("msg", msg);
+        String response = httpHelper.post(configURL + "/api/v1/alarm/handle?ip=" + localIp, heads, data, REQUEST_TIMEOUT);
+        JSONObject jsonObject = JSONObject.parseObject(response);
+        return jsonObject.getBoolean("data");
     }
 
     private PlainCanal queryConfig(String url) {

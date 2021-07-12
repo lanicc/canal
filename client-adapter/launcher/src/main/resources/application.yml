@@ -52,11 +52,47 @@ canal.conf:
 #      username: root
 #      password: 121212
   canalAdapters:
-  - instance: example # canal instance Name or mq topic name
-    groups:
-    - groupId: g1
-      outerAdapters:
-      - name: logger
+    - instance: 4b5c151de41221126b4b6f6f9ce6a5f0
+      groups:
+        - groupId: g1
+          outerAdapters:
+            - name: logger
+    - instance: rm-bp1kqeg6bm130n2cq
+      groups:
+        - groupId: g1
+          outerAdapters:
+            - name: logger
+    - instance: 172.17.41.32
+      groups:
+        - groupId: g1
+          outerAdapters:
+            - name: logger
+    - instance: mysql1.dev.scsite.net
+      groups:
+        - groupId: g1
+          outerAdapters:
+            - name: logger
+    - instance: 10.255.15.109
+      groups:
+        - groupId: g1
+          outerAdapters:
+            - name: logger
+    - instance: dev.database006.scsite.net
+      groups:
+        - groupId: g1
+          outerAdapters:
+            - name: logger
+#  - instance: 4b5c151de41221126b4b6f6f9ce6a5f0 # canal instance Name or mq topic name
+#    groups:
+#    - groupId: g1
+#      outerAdapters:
+#      - name: ng
+#        key: ng-database
+#        properties:
+#          jdbc.driverClassName: com.mysql.jdbc.Driver
+#          jdbc.url: jdbc:mysql://test.database3700.scsite.net:3700/datacenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+#          jdbc.username: souche_rw
+#          jdbc.password: hbyA8CPqhr5uZxeXuSeEdm5rhp2ZKF
 #      - name: rdb
 #        key: mysql1
 #        properties:

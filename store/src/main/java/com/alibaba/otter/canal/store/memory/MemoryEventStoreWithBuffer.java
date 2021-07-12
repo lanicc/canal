@@ -22,6 +22,8 @@ import com.alibaba.otter.canal.store.helper.CanalEventUtils;
 import com.alibaba.otter.canal.store.model.BatchMode;
 import com.alibaba.otter.canal.store.model.Event;
 import com.alibaba.otter.canal.store.model.Events;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 基于内存buffer构建内存memory store
@@ -36,6 +38,8 @@ import com.alibaba.otter.canal.store.model.Events;
  * @version 1.0.0
  */
 public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge implements CanalEventStore<Event>, CanalStoreScavenge {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final long INIT_SEQUENCE = -1;
     private int               bufferSize    = 16 * 1024;
@@ -155,6 +159,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         if (data == null || data.isEmpty()) {
             return true;
         }
+
+        logger.warn("Try put ring buffer current position: " + putSequence.get() + ":" + getSequence.get() + ":" + ackSequence.get() + ", " + data.size());
 
         final ReentrantLock lock = this.lock;
         lock.lock();

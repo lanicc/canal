@@ -1,14 +1,5 @@
 package com.alibaba.otter.canal.admin.service.impl;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.otter.canal.admin.common.exception.ServiceException;
 import com.alibaba.otter.canal.admin.model.CanalCluster;
 import com.alibaba.otter.canal.admin.model.CanalConfig;
@@ -19,35 +10,50 @@ import com.alibaba.otter.canal.admin.service.NodeServerService;
 import com.alibaba.otter.canal.admin.service.PollingConfigService;
 import com.alibaba.otter.canal.protocol.SecurityUtil;
 import com.google.common.base.Joiner;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PollingConfigServiceImpl implements PollingConfigService {
 
     @Autowired
-    NodeServerService   nodeServerService;
+    NodeServerService nodeServerService;
 
     @Autowired
     CanalClusterService canalClusterService;
 
-    public boolean autoRegister(String ip, Integer adminPort, String cluster, String name) {
-        NodeServer server = NodeServer.find.query().where().eq("ip", ip).eq("adminPort", adminPort).findOne();
-        if (server == null) {
-            server = new NodeServer();
-            server.setName(Optional.ofNullable(name).orElse(ip));
-            server.setIp(ip);
-            server.setAdminPort(adminPort);
-            server.setTcpPort(adminPort + 1);
-            server.setMetricPort(adminPort + 2);
-            if (StringUtils.isNotEmpty(cluster)) {
-                CanalCluster clusterConfig = CanalCluster.find.query().where().eq("name", cluster).findOne();
-                if (clusterConfig == null) {
-                    throw new ServiceException("auto cluster : " + cluster + " is not found.");
-                }
-
-                server.setClusterId(clusterConfig.getId());
+    public boolean autoRegister(String idStr, String ip, Integer adminPort, String cluster, String name) {
+        long id = Long.parseLong(idStr);
+        NodeServer oldServer = NodeServer.find.byId(id);
+        if (oldServer != null) {
+            oldServer.delete();
+            CanalConfig canalConfig = CanalConfig.find.query().where().eq("serverId", id).findOne();
+            if (canalConfig != null) {
+                canalConfig.delete();
             }
-            nodeServerService.save(server);
         }
+        NodeServer server = new NodeServer();
+        server.setId(id);
+        server.setName(Optional.ofNullable(name).orElse(ip));
+        server.setIp(ip);
+        server.setAdminPort(adminPort);
+        server.setTcpPort(adminPort + 1);
+        server.setMetricPort(adminPort + 2);
+        if (StringUtils.isNotEmpty(cluster)) {
+            CanalCluster clusterConfig = CanalCluster.find.query().where().eq("name", cluster).findOne();
+            if (clusterConfig == null) {
+                throw new ServiceException("auto cluster : " + cluster + " is not found.");
+            }
+
+            server.setClusterId(clusterConfig.getId());
+        }
+        nodeServerService.save(server);
 
         return true;
     }
@@ -81,22 +87,22 @@ public class PollingConfigServiceImpl implements PollingConfigService {
         List<CanalInstanceConfig> canalInstanceConfigs;
         if (server.getClusterId() != null) { // 集群模式
             canalInstanceConfigs = CanalInstanceConfig.find.query()
-                .where()
-                .eq("status", "1")
-                .eq("clusterId", server.getClusterId())
-                .findList(); // 取属于该集群的所有instance config
+                    .where()
+                    .eq("status", "1")
+                    .eq("clusterId", server.getClusterId())
+                    .findList(); // 取属于该集群的所有instance config
         } else { // 单机模式
             canalInstanceConfigs = CanalInstanceConfig.find.query()
-                .where()
-                .eq("status", "1")
-                .eq("serverId", server.getId())
-                .findList();
+                    .where()
+                    .eq("status", "1")
+                    .eq("serverId", server.getId())
+                    .findList();
         }
 
         CanalInstanceConfig canalInstanceConfig = new CanalInstanceConfig();
         List<String> instances = canalInstanceConfigs.stream()
-            .map(CanalInstanceConfig::getName)
-            .collect(Collectors.toList());
+                .map(CanalInstanceConfig::getName)
+                .collect(Collectors.toList());
         String data = Joiner.on(',').join(instances);
         canalInstanceConfig.setContent(data);
         if (!StringUtils.isEmpty(md5)) {

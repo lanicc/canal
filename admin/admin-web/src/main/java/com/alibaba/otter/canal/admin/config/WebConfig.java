@@ -54,31 +54,31 @@ public class WebConfig implements WebMvcConfigurer {
             @Override
             public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                      Object o) throws Exception {
-                String token = httpServletRequest.getHeader("X-Token");
-                boolean valid = false;
-                if (token != null) {
-                    User user = UserController.loginUsers.getIfPresent(token);
-                    if (user != null) {
-                        valid = true;
-                        httpServletRequest.setAttribute("user", user);
-                        httpServletRequest.setAttribute("token", token);
-                    }
-                }
-                if (!valid) {
-                    BaseModel baseModel = BaseModel.getInstance(null);
-                    baseModel.setCode(50014);
-                    baseModel.setMessage("Expired token");
-                    ObjectMapper mapper = new ObjectMapper();
-                    String json = mapper.writeValueAsString(baseModel);
-                    try {
-                        httpServletResponse.setContentType("application/json;charset=UTF-8");
-                        PrintWriter out = httpServletResponse.getWriter();
-                        out.print(json);
-                    } catch (Throwable e) {
-                        throw new RuntimeException(e);
-                    }
-                    return false;
-                }
+//                String token = httpServletRequest.getHeader("X-Token");
+//                boolean valid = false;
+//                if (token != null) {
+//                    User user = UserController.loginUsers.getIfPresent(token);
+//                    if (user != null) {
+//                        valid = true;
+//                        httpServletRequest.setAttribute("user", user);
+//                        httpServletRequest.setAttribute("token", token);
+//                    }
+//                }
+//                if (!valid) {
+//                    BaseModel baseModel = BaseModel.getInstance(null);
+//                    baseModel.setCode(50014);
+//                    baseModel.setMessage("Expired token");
+//                    ObjectMapper mapper = new ObjectMapper();
+//                    String json = mapper.writeValueAsString(baseModel);
+//                    try {
+//                        httpServletResponse.setContentType("application/json;charset=UTF-8");
+//                        PrintWriter out = httpServletResponse.getWriter();
+//                        out.print(json);
+//                    } catch (Throwable e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    return false;
+//                }
 
                 return true;
             }

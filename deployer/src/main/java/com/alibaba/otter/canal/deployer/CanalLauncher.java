@@ -49,6 +49,7 @@ public class CanalLauncher {
             final CanalStarter canalStater = new CanalStarter(properties);
             String managerAddress = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_MANAGER);
             if (StringUtils.isNotEmpty(managerAddress)) {
+                String id = CanalController.getProperty(properties, CanalConstants.CANAL_ID);
                 String user = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_USER);
                 String passwd = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_PASSWD);
                 String adminPort = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_PORT, "11110");
@@ -61,6 +62,7 @@ public class CanalLauncher {
                     registerIp = AddressUtils.getHostIp();
                 }
                 final PlainCanalConfigClient configClient = new PlainCanalConfigClient(managerAddress,
+                    id,
                     user,
                     passwd,
                     registerIp,

@@ -48,26 +48,9 @@ public class CanalAdapterLoader {
     public void init() {
         loader = ExtensionLoader.getExtensionLoader(OuterAdapter.class);
 
-        for (CanalClientConfig.CanalAdapter canalAdapter : canalClientConfig.getCanalAdapters()) {
-            for (CanalClientConfig.Group group : canalAdapter.getGroups()) {
-                List<List<OuterAdapter>> canalOuterAdapterGroups = new CopyOnWriteArrayList<>();
-                List<OuterAdapter> canalOuterAdapters = new CopyOnWriteArrayList<>();
-                for (OuterAdapterConfig config : group.getOuterAdapters()) {
-                    loadAdapter(config, canalOuterAdapters);
-                }
-                canalOuterAdapterGroups.add(canalOuterAdapters);
-
-                AdapterProcessor adapterProcessor = canalAdapterProcessors.computeIfAbsent(canalAdapter.getInstance()
-                                                                                           + "|"
-                                                                                           + StringUtils.trimToEmpty(group.getGroupId()),
-                    f -> new AdapterProcessor(canalClientConfig,
-                        canalAdapter.getInstance(),
-                        group.getGroupId(),
-                        canalOuterAdapterGroups));
-                adapterProcessor.start();
-
-                logger.info("Start adapter for canal-client mq topic: {} succeed", canalAdapter.getInstance() + "-"
-                                                                                   + group.getGroupId());
+        if (canalClientConfig.getCanalAdapters() != null) {
+            for (CanalClientConfig.CanalAdapter canalAdapter : canalClientConfig.getCanalAdapters()) {
+                add(canalAdapter);
             }
         }
 
@@ -196,6 +179,41 @@ public class CanalAdapterLoader {
         // }
         // // CanalAdapterRabbitMQWork
         // }
+    }
+
+    public void add(CanalClientConfig.CanalAdapter canalAdapter) {
+        for (CanalClientConfig.Group group : canalAdapter.getGroups()) {
+            List<List<OuterAdapter>> canalOuterAdapterGroups = new CopyOnWriteArrayList<>();
+            List<OuterAdapter> canalOuterAdapters = new CopyOnWriteArrayList<>();
+            for (OuterAdapterConfig config : group.getOuterAdapters()) {
+                loadAdapter(config, canalOuterAdapters);
+            }
+            canalOuterAdapterGroups.add(canalOuterAdapters);
+
+            AdapterProcessor adapterProcessor = canalAdapterProcessors.computeIfAbsent(canalAdapter.getInstance()
+                            + "|"
+                            + StringUtils.trimToEmpty(group.getGroupId()),
+                    f -> new AdapterProcessor(canalClientConfig,
+                            canalAdapter.getInstance(),
+                            group.getGroupId(),
+                            canalOuterAdapterGroups));
+            adapterProcessor.start();
+
+            logger.info("Start adapter for canal-client: {} succeed", canalAdapter.getInstance() + "-"
+                    + group.getGroupId());
+        }
+    }
+
+    public void remove(CanalClientConfig.CanalAdapter canalAdapter) {
+        for (CanalClientConfig.Group group : canalAdapter.getGroups()) {
+            AdapterProcessor adapterProcessor = canalAdapterProcessors.remove(canalAdapter.getInstance()
+                    + "|"
+                    + StringUtils.trimToEmpty(group.getGroupId()));
+            adapterProcessor.stop();
+
+            logger.info("Stop adapter for canal-client: {} succeed", canalAdapter.getInstance() + "-"
+                    + group.getGroupId());
+        }
     }
 
     private void loadAdapter(OuterAdapterConfig config, List<OuterAdapter> canalOutConnectors) {

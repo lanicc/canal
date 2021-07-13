@@ -23,7 +23,7 @@ import org.yaml.snakeyaml.Yaml;
 import com.alibaba.otter.canal.adapter.launcher.loader.CanalAdapterService;
 import com.alibaba.otter.canal.client.adapter.support.Util;
 
-@Component
+//@Component
 public class ApplicationConfigMonitor {
 
     private static final Logger   logger = LoggerFactory.getLogger(ApplicationConfigMonitor.class);

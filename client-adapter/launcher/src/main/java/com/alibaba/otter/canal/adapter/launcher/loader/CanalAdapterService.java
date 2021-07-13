@@ -1,21 +1,20 @@
 package com.alibaba.otter.canal.adapter.launcher.loader;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.cloud.context.refresh.ContextRefresher;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
-
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.otter.canal.adapter.launcher.common.SyncSwitch;
 import com.alibaba.otter.canal.adapter.launcher.config.AdapterCanalConfig;
 import com.alibaba.otter.canal.adapter.launcher.config.SpringContext;
+import com.alibaba.otter.canal.client.adapter.support.CanalClientConfig;
 import com.alibaba.otter.canal.client.adapter.support.DatasourceConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 
 /**
  * 适配器启动业务类
@@ -24,7 +23,7 @@ import com.alibaba.otter.canal.client.adapter.support.DatasourceConfig;
  * @version 1.0.0
  */
 @Component
-@RefreshScope
+//@RefreshScope
 public class CanalAdapterService {
 
     private static final Logger logger  = LoggerFactory.getLogger(CanalAdapterService.class);
@@ -46,6 +45,18 @@ public class CanalAdapterService {
     private SyncSwitch          syncSwitch;
 
     private volatile boolean    running = false;
+
+    public void add(CanalClientConfig.CanalAdapter canalAdapter) {
+        if (canalAdapter != null) {
+            adapterLoader.add(canalAdapter);
+        }
+    }
+
+    public void remove(CanalClientConfig.CanalAdapter canalAdapter) {
+        if (canalAdapter != null) {
+            adapterLoader.remove(canalAdapter);
+        }
+    }
 
     @PostConstruct
     public synchronized void init() {

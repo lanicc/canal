@@ -26,7 +26,11 @@ public class DbRmtConfigLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(DbRemoteConfigLoader.class);
 
-    private DruidDataSource dataSource;
+    private final DruidDataSource dataSource;
+
+    private final String sql = "select cac.id, cic.name, cac.content, cac.modified_time\n" +
+            "from canal_adapter_config cac\n" +
+            "         inner join canal_instance_config cic on cac.id = cic.id";
 
     public DbRmtConfigLoader(String driverName, String jdbcUrl, String jdbcUsername, String jdbcPassword) {
         dataSource = new DruidDataSource();
@@ -65,7 +69,6 @@ public class DbRmtConfigLoader {
     private List<ConfigItem> getRemoteAdapterConfig() {
         List<ConfigItem> configItemList = new LinkedList<>();
 
-        String sql = "select id, name, content, modified_time from canal_adapter_config where status = 0";
         try (Connection conn = dataSource.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {

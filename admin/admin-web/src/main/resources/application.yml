@@ -19,3 +19,6 @@ spring.datasource:
 canal:
   adminUser: admin
   adminPasswd: admin
+
+#ng:
+#  autosync: true

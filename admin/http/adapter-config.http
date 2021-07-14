@@ -1,0 +1,13 @@
+GET http://localhost:8089/api/v1/canal/adapter/522
+
+
+###
+PUT http://localhost:8089/api/v1/canal/adapter
+Content-Type: application/json
+
+{
+  "id": 522,
+  "category": "522",
+  "name": "522",
+  "content": "groups:\n  - groupId: g1\n    outerAdapters:\n      - name: logger\n  - groupId: g2\n    outerAdapters:\n      - name: logger"
+}

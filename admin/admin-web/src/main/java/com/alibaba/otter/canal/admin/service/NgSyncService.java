@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -37,17 +38,22 @@ public class NgSyncService implements CommandLineRunner {
     @Autowired
     private CanalInstanceService instanceService;
 
+    @Value("${ng.autosync:false}")
+    private boolean autosync;
+
     public void init() {
-        Query.init(
-                "com.mysql.jdbc.Driver",
-                "jdbc:mysql://test.database3700.scsite.net:3700/datacenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true",
-                "souche_rw",
-                "hbyA8CPqhr5uZxeXuSeEdm5rhp2ZKF"
-        );
-        List<CanalConfigDO> configDOList = Query.findList();
-        configDOList.stream()
-                .filter(Objects::nonNull)
-                .forEach(this::sync);
+        if (autosync) {
+            Query.init(
+                    "com.mysql.jdbc.Driver",
+                    "jdbc:mysql://test.database3700.scsite.net:3700/datacenter?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true",
+                    "souche_rw",
+                    "hbyA8CPqhr5uZxeXuSeEdm5rhp2ZKF"
+            );
+            List<CanalConfigDO> configDOList = Query.findList();
+            configDOList.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(this::sync);
+        }
     }
 
     public boolean sync(CanalConfigDO canalConfigDO) {

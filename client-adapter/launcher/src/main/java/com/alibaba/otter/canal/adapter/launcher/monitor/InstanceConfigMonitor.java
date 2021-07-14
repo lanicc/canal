@@ -54,15 +54,18 @@ public class InstanceConfigMonitor implements CommandLineRunner {
             ConfigItem newConfigItem = iterator.next();
             ConfigItem oldConfigItem = configItemMap.remove(newConfigItem.getId());
             if (oldConfigItem == null) {
+                logger.info("try to add new config item: {}", JSON.toJSONString(newConfigItem));
                 add(newConfigItem);
             } else {
                 if (!Objects.equals(newConfigItem.getModifiedTime(), oldConfigItem.getModifiedTime())) {
+                    logger.info("try to update config item from: {} to: {}", JSON.toJSONString(oldConfigItem), JSON.toJSONString(newConfigItem));
                     update(newConfigItem);
                 }
             }
         }
         if (!configItemMap.isEmpty()) {
             for (Long id : configItemMap.keySet()) {
+                logger.info("try to remove config item, id: {}", id);
                 remove(id);
             }
         }
@@ -71,16 +74,20 @@ public class InstanceConfigMonitor implements CommandLineRunner {
     private void add(ConfigItem configItem) {
         adapterConfigs.put(configItem.getId(), configItem);
         canalAdapterService.add(toAdapter(configItem));
+        logger.info("add config iterm success, id: {}", configItem.getId());
     }
 
     private void update(ConfigItem configItem) {
         remove(configItem.getId());
         add(configItem);
+        logger.info("update config iterm success, id: {}", configItem.getId());
     }
 
     private void remove(long id) {
         ConfigItem configItem = adapterConfigs.remove(id);
         canalAdapterService.remove(toAdapter(configItem));
+        logger.info("remove config item: {}, success", JSON.toJSONString(configItem));
+
     }
 
     private CanalClientConfig.CanalAdapter toAdapter(ConfigItem configItem) {

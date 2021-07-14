@@ -28,9 +28,11 @@ public class DbRmtConfigLoader {
 
     private final DruidDataSource dataSource;
 
-    private final String sql = "select cac.id, cic.name, cac.content, cac.modified_time\n" +
-            "from canal_adapter_config cac\n" +
-            "         inner join canal_instance_config cic on cac.id = cic.id";
+    private final String sql =
+            "select cac.id, cic.name, cac.content, cac.modified_time\n" +
+                    "from canal_adapter_config cac\n" +
+                    "         inner join canal_instance_config cic on cac.id = cic.id\n" +
+                    "where cac.status = '0'\n";
 
     public DbRmtConfigLoader(String driverName, String jdbcUrl, String jdbcUsername, String jdbcPassword) {
         dataSource = new DruidDataSource();
@@ -83,7 +85,6 @@ public class DbRmtConfigLoader {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        logger.info("getRemoteAdapterConfig configItemList: {}", JSON.toJSONString(configItemList));
         return configItemList;
     }
 

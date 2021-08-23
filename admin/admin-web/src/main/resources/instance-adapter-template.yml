@@ -1,0 +1,7 @@
+groups:
+  - groupId: g1
+    outerAdapters:
+      - name: logger
+  - groupId: g2
+    outerAdapters:
+      - name: logger

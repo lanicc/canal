@@ -19,6 +19,7 @@
         <br>
         &nbsp;adapter配置(yml)&nbsp;&nbsp;&nbsp;&nbsp;
         <el-button type="primary" @click="onAdapterSubmit">修改</el-button>
+        <el-button type="primary" @click="onGetAdapterTemplate">载入模板</el-button>
         <el-button type="warning" @click="onAdapterCancel">重置</el-button>
       </el-form-item>
       <editor v-model="form.adapterContent" lang="yaml" theme="chrome" width="100%" :height="200" @init="editorInit" />
@@ -27,7 +28,13 @@
 </template>
 
 <script>
-import {canalAdapterDetail, canalInstanceDetail, updateCanalAdapter, updateCanalInstance} from '@/api/canalInstance'
+import {
+  canalAdapterDetail,
+  canalInstanceDetail,
+  getAdapterTemplateInstance, getTemplateAdapter,
+  updateCanalAdapter,
+  updateCanalInstance
+} from '@/api/canalInstance'
 import { getClustersAndServers } from '@/api/canalCluster'
 
 export default {
@@ -142,6 +149,11 @@ export default {
     },
     onBack() {
       history.go(-1)
+    },
+    onGetAdapterTemplate() {
+      getTemplateAdapter().then(res => {
+        this.form.adapterContent = res.data
+      })
     }
   }
 }

@@ -96,3 +96,11 @@ export function updateCanalAdapter(data) {
     data
   })
 }
+
+
+export function getTemplateAdapter() {
+  return request({
+    url: '/canal/adapter/template',
+    method: 'get'
+  })
+}

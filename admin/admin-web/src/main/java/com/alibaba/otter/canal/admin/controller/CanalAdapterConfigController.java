@@ -1,5 +1,6 @@
 package com.alibaba.otter.canal.admin.controller;
 
+import com.alibaba.otter.canal.admin.common.TemplateConfigLoader;
 import com.alibaba.otter.canal.admin.model.BaseModel;
 import com.alibaba.otter.canal.admin.model.CanalAdapterConfig;
 import com.alibaba.otter.canal.admin.service.CanalAdapterConfigService;
@@ -28,6 +29,11 @@ public class CanalAdapterConfigController {
     public BaseModel<String> update(@RequestBody CanalAdapterConfig canalAdapterConfig, @PathVariable String env) {
         canalAdapterConfigService.saveOrUpdate(canalAdapterConfig);
         return BaseModel.getInstance("success");
+    }
+
+    @GetMapping("/adapter/template")
+    public BaseModel<String> template(@PathVariable String env) {
+        return BaseModel.getInstance(TemplateConfigLoader.loadAdapterConfig());
     }
 
     private String s = "groups:\n  - groupId: g1\n    outerAdapters:\n      - name: logger\n  - groupId: g2\n    outerAdapters:\n      - name: logger";

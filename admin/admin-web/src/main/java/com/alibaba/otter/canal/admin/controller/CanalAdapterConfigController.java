@@ -3,7 +3,10 @@ package com.alibaba.otter.canal.admin.controller;
 import com.alibaba.otter.canal.admin.common.TemplateConfigLoader;
 import com.alibaba.otter.canal.admin.model.BaseModel;
 import com.alibaba.otter.canal.admin.model.CanalAdapterConfig;
+import com.alibaba.otter.canal.admin.model.CanalInstanceConfig;
+import com.alibaba.otter.canal.admin.model.Pager;
 import com.alibaba.otter.canal.admin.service.CanalAdapterConfigService;
+import com.alibaba.otter.canal.admin.service.CanalInstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

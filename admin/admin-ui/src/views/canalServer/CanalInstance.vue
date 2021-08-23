@@ -47,6 +47,11 @@
           <el-tag :type="scope.row.runningStatus | statusFilter">{{ scope.row.runningStatus | statusLabel }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column class-name="status-col" label="adapter状态" min-width="150" align="center">
+        <template slot-scope="scope">
+          <el-tag>{{ scope.row.adapterStatus | adapterStatusLabel}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="修改时间" min-width="200" align="center">
         <template slot-scope="scope">
           {{ scope.row.modifiedTime }}
@@ -94,6 +99,12 @@ export default {
         '0': '停止'
       }
       return statusMap[status]
+    },
+    adapterStatusLabel(status) {
+      if (status === '0') {
+        return '正常'
+      }
+      return '-'
     }
   },
   data() {

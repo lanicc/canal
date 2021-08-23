@@ -1,8 +1,14 @@
 package com.alibaba.otter.canal.admin.controller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import com.alibaba.otter.canal.admin.model.*;
+import com.alibaba.otter.canal.admin.service.CanalAdapterConfigService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.otter.canal.admin.common.TemplateConfigLoader;
-import com.alibaba.otter.canal.admin.model.BaseModel;
-import com.alibaba.otter.canal.admin.model.CanalInstanceConfig;
-import com.alibaba.otter.canal.admin.model.Pager;
 import com.alibaba.otter.canal.admin.service.CanalInstanceService;
 
 /**
@@ -33,6 +36,9 @@ public class CanalInstanceController {
     @Autowired
     CanalInstanceService canalInstanceConfigService;
 
+    @Autowired
+    private CanalAdapterConfigService canalAdapterConfigService;
+
     /**
      * 实例配置列表
      *
@@ -43,8 +49,26 @@ public class CanalInstanceController {
     @GetMapping(value = "/instances")
     public BaseModel<Pager<CanalInstanceConfig>> list(CanalInstanceConfig canalInstanceConfig,
                                                       Pager<CanalInstanceConfig> pager, @PathVariable String env) {
-        return BaseModel.getInstance(canalInstanceConfigService.findList(canalInstanceConfig, pager));
+        Pager<CanalInstanceConfig> configListPage = canalInstanceConfigService.findList(canalInstanceConfig, pager);
+        List<CanalInstanceConfig> items = configListPage.getItems();
+        items = items.stream()
+                .map(canalInstanceConfig1 -> {
+                    CanalInstanceConfigWithAdapter withAdapter = new CanalInstanceConfigWithAdapter();
+                    try {
+                        BeanUtils.copyProperties(withAdapter, canalInstanceConfig1);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    CanalAdapterConfig detail = canalAdapterConfigService.detail(canalInstanceConfig1.getId());
+                    withAdapter.setAdapterStatus(detail.getStatus());
+                    return withAdapter;
+                })
+                .collect(Collectors.toList());
+        configListPage.setItems(items);
+        return BaseModel.getInstance(configListPage);
     }
+
+
 
     /**
      * 保存实例配置

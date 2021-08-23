@@ -1,5 +1,7 @@
 package com.souche.canal.instance.monitor.boot.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.otter.canal.instance.core.CanalInstance;
 import com.alibaba.otter.canal.meta.CanalMetaManager;
 import com.alibaba.otter.canal.protocol.ClientIdentity;
@@ -10,10 +12,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -128,4 +134,12 @@ public class MonitorController {
         }
     }
 
+    @PostConstruct
+    public void start() {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleWithFixedDelay(() -> {
+            Object all = all();
+            System.out.println(JSON.toJSONString(all, SerializerFeature.PrettyFormat));
+        }, 10, 5, TimeUnit.SECONDS);
+    }
 }

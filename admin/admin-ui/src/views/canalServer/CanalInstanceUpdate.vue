@@ -14,13 +14,20 @@
           <el-button type="info" @click="onBack">返回</el-button>
         </el-form-item>
       </div>
-      <editor v-model="form.content" lang="properties" theme="chrome" width="100%" :height="800" @init="editorInit" />
+      <editor v-model="form.content" lang="properties" theme="chrome" width="100%" :height="600" @init="editorInit" />
+      <el-form-item>
+        <br>
+        &nbsp;adapter配置(yml)&nbsp;&nbsp;&nbsp;&nbsp;
+        <el-button type="primary" @click="onAdapterSubmit">修改</el-button>
+        <el-button type="warning" @click="onAdapterCancel">重置</el-button>
+      </el-form-item>
+      <editor v-model="form.adapterContent" lang="yaml" theme="chrome" width="100%" :height="200" @init="editorInit" />
     </el-form>
   </div>
 </template>
 
 <script>
-import { canalInstanceDetail, updateCanalInstance } from '@/api/canalInstance'
+import {canalAdapterDetail, canalInstanceDetail, updateCanalAdapter, updateCanalInstance} from '@/api/canalInstance'
 import { getClustersAndServers } from '@/api/canalCluster'
 
 export default {
@@ -34,7 +41,8 @@ export default {
         id: null,
         name: '',
         content: '',
-        clusterServerId: ''
+        clusterServerId: '',
+        adapterContent: ''
       }
     }
   },
@@ -62,6 +70,10 @@ export default {
         this.form.name = data.name + '/instance.propertios'
         this.form.content = data.content
         this.form.clusterServerId = data.clusterServerId
+      })
+      canalAdapterDetail(this.$route.query.id).then(response => {
+        const data = response.data
+        this.form.adapterContent = data.content
       })
     },
     onSubmit() {
@@ -91,6 +103,41 @@ export default {
       })
     },
     onCancel() {
+      this.loadCanalConfig()
+    },
+    onAdapterSubmit() {
+      this.$confirm(
+        '修改Adapter配置可能会导致重启，是否继续？',
+        '确定修改',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        let adapterData = {}
+        adapterData.id = this.form.id
+        adapterData.category = this.form.id
+        adapterData.name = this.form.id
+        adapterData.content = this.form.adapterContent
+        adapterData.status = 0
+        updateCanalAdapter(adapterData).then(response => {
+          if (response.data === 'success') {
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+            this.loadCanalConfig()
+          } else {
+            this.$message({
+              message: '修改失败',
+              type: 'error'
+            })
+          }
+        })
+      })
+    },
+    onAdapterCancel() {
       this.loadCanalConfig()
     },
     onBack() {

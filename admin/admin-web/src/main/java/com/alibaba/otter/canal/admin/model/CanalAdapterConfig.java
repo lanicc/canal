@@ -33,6 +33,8 @@ public class CanalAdapterConfig extends Model {
 
     private String content;
 
+    private String status;
+
     public Long getId() {
         return id;
     }
@@ -63,5 +65,13 @@ public class CanalAdapterConfig extends Model {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -79,3 +79,20 @@ export function getTemplateInstance() {
     method: 'get'
   })
 }
+
+
+
+export function canalAdapterDetail(id) {
+  return request({
+    url: '/canal/adapter/' + id,
+    method: 'get'
+  })
+}
+
+export function updateCanalAdapter(data) {
+  return request({
+    url: '/canal/adapter',
+    method: 'put',
+    data
+  })
+}

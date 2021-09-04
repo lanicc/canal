@@ -14,6 +14,7 @@ public class PlainCanal {
     private Properties properties;
     private String     md5;
     private String     status;
+    private String content;
 
     public PlainCanal(){
     }
@@ -46,6 +47,14 @@ public class PlainCanal {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Override

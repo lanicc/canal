@@ -36,14 +36,7 @@
 
 	<!-- 报警处理类 -->
 <!--	<bean id="alarmHandler" class="com.alibaba.otter.canal.common.alarm.LogAlarmHandler" />-->
-	<bean id="alarmHandler" class="com.alibaba.otter.canal.deployer.alarm.ManagedAlarmHandler">
-		<constructor-arg index="0" value="${canal.id}"/>
-		<constructor-arg index="1" value="${canal.admin.manager}"/>
-		<constructor-arg index="2" value="${canal.admin.user}"/>
-		<constructor-arg index="3" value="${canal.admin.passwd}"/>
-		<constructor-arg index="4" value="${canal.register.ip}"/>
-		<constructor-arg index="5" value="${canal.admin.port}"/>
-	</bean>
+	<bean id="alarmHandler" class="com.alibaba.otter.canal.deployer.alarm.ManagedAlarmHandler"/>
 
 	<bean id="zkClientx" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean" >
 		<property name="targetClass" value="com.alibaba.otter.canal.common.zookeeper.ZkClientx" />

@@ -3,6 +3,7 @@ package com.alibaba.otter.canal.deployer.alarm;
 import com.alibaba.otter.canal.common.AbstractCanalLifeCycle;
 import com.alibaba.otter.canal.common.alarm.CanalAlarmHandler;
 import com.alibaba.otter.canal.instance.manager.plain.PlainCanalConfigClient;
+import com.alibaba.otter.canal.instance.manager.plain.PlainCanalConfigClientFactory;
 
 /**
  * Created on 2021/7/10.
@@ -24,13 +25,8 @@ public class ManagedAlarmHandler extends AbstractCanalLifeCycle implements Canal
 
     private static volatile PlainCanalConfigClient configClient;
 
-    public ManagedAlarmHandler(String canalId, String managerAddress, String adminUser, String adminPasswd, String registerIp, int adminPort) {
-//        this.managerAddress = managerAddress;
-//        this.adminUser = adminUser;
-//        this.adminPasswd = adminPasswd;
-//        this.registerIp = registerIp;
-//        this.adminPort = adminPort;
-        initPlainCanalConfigClient(managerAddress, adminUser, adminPasswd, registerIp, adminPort);
+    public ManagedAlarmHandler() {
+        initPlainCanalConfigClient();
     }
 
     @Override
@@ -42,13 +38,9 @@ public class ManagedAlarmHandler extends AbstractCanalLifeCycle implements Canal
 
     }
 
-    private static void initPlainCanalConfigClient(String managerAddress, String adminUser, String adminPasswd, String registerIp, int adminPort) {
+    private static void initPlainCanalConfigClient() {
         if (configClient == null) {
-            synchronized (ManagedAlarmHandler.class) {
-                if (configClient == null) {
-                    configClient = new PlainCanalConfigClient(managerAddress, adminUser, adminPasswd, registerIp, adminPort);
-                }
-            }
+            configClient = PlainCanalConfigClientFactory.getCanalConfigClient();
         }
     }
 

@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.otter.canal.instance.manager.plain.PlainCanalConfigClientFactory;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -49,33 +50,10 @@ public class CanalLauncher {
             final CanalStarter canalStater = new CanalStarter(properties);
             String managerAddress = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_MANAGER);
             if (StringUtils.isNotEmpty(managerAddress)) {
-                String id = CanalController.getProperty(properties, CanalConstants.CANAL_ID);
-                String user = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_USER);
-                String passwd = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_PASSWD);
-                String adminPort = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_PORT, "11110");
-                boolean autoRegister = BooleanUtils.toBoolean(CanalController.getProperty(properties,
-                    CanalConstants.CANAL_ADMIN_AUTO_REGISTER));
-                String autoCluster = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_AUTO_CLUSTER);
-                String name = CanalController.getProperty(properties, CanalConstants.CANAL_ADMIN_REGISTER_NAME);
-                String registerIp = CanalController.getProperty(properties, CanalConstants.CANAL_REGISTER_IP);
-                if (StringUtils.isEmpty(registerIp)) {
-                    registerIp = AddressUtils.getHostIp();
-                }
-                final PlainCanalConfigClient configClient = new PlainCanalConfigClient(managerAddress,
-                    id,
-                    user,
-                    passwd,
-                    registerIp,
-                    Integer.parseInt(adminPort),
-                    autoRegister,
-                    autoCluster,
-                    name);
+                PlainCanalConfigClientFactory.init(properties);
+                final PlainCanalConfigClient configClient = PlainCanalConfigClientFactory.getCanalConfigClient();
+
                 PlainCanal canalConfig = configClient.findServer(null);
-                if (canalConfig == null) {
-                    throw new IllegalArgumentException("managerAddress:" + managerAddress
-                                                       + " can't not found config for [" + registerIp + ":" + adminPort
-                                                       + "]");
-                }
                 Properties managerProperties = canalConfig.getProperties();
                 // merge local
                 managerProperties.putAll(properties);

@@ -28,15 +28,15 @@ public class PlainCanalConfigClient extends AbstractCanalLifeCycle implements Ca
 
     private final static Integer REQUEST_TIMEOUT = 5000;
     private String               configURL;
-    private String               id;
+    protected String               id;
     private String               user;
     private String               passwd;
     private HttpHelper           httpHelper;
     private String               localIp;
     private int                  adminPort;
-    private boolean              autoRegister;
-    private String               autoCluster;
-    private String               name;
+    protected boolean              autoRegister;
+    protected String               autoCluster;
+    protected String               name;
 
     public PlainCanalConfigClient(String configURL,String id, String user, String passwd, String localIp, int adminPort,
                                   boolean autoRegister, String autoCluster, String name){

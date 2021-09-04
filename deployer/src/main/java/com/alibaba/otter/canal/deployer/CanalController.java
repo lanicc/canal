@@ -3,6 +3,7 @@ package com.alibaba.otter.canal.deployer;
 import java.util.Map;
 import java.util.Properties;
 
+import com.alibaba.otter.canal.instance.manager.plain.PlainCanalConfigClientFactory;
 import org.I0Itec.zkclient.IZkStateListener;
 import org.I0Itec.zkclient.exception.ZkNoNodeException;
 import org.I0Itec.zkclient.exception.ZkNodeExistsException;
@@ -386,7 +387,7 @@ public class CanalController {
     }
 
     private PlainCanalConfigClient getManagerClient(String managerAddress) {
-        return new PlainCanalConfigClient(managerAddress, this.adminUser, this.adminPasswd, this.registerIp, adminPort);
+        return PlainCanalConfigClientFactory.getCanalConfigClient();
     }
 
     private void initInstanceConfig(Properties properties) {

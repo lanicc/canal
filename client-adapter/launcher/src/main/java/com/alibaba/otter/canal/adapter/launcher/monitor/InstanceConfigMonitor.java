@@ -109,7 +109,8 @@ public class InstanceConfigMonitor implements CommandLineRunner {
             executor.scheduleWithFixedDelay(() -> {
                 try {
                     monitor();
-                } catch (Exception e) {
+                } catch (Throwable e) {
+                    e.printStackTrace();
                     logger.error("scan remote instance adapter configs failed", e);
                 }
             }, 0, 3, TimeUnit.SECONDS);
